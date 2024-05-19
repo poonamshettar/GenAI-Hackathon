@@ -6,7 +6,7 @@ from search import setup_search, retrieve_documents
 PINECONE_ID="085adda2-3198-4495-a3f2-70e4a0d8e738"
 index_name="b"
 pinecone_index=configure_pinecone(PINECONE_ID,index_name)
-index = read_and_index_documents("../articles",pinecone_index)
+index = read_and_index_documents("../Pdfs",pinecone_index)
 
 # Setup search functionality
 query_engine = setup_search(index)
