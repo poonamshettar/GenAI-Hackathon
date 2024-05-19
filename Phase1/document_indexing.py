@@ -8,7 +8,7 @@ def configure_pinecone(PINECONE_ID,index_name):
     if index_name not in pinecone.list_indexes().names():
         pinecone.create_index(
         name=index_name,
-        dimension=2,
+        dimension=384,
         metric="cosine",
         spec=ServerlessSpec(
           cloud='aws', 
@@ -20,10 +20,12 @@ def configure_pinecone(PINECONE_ID,index_name):
 
 
 def read_and_index_documents(directory,pinecone_index):
-    documents = SimpleDirectoryReader(directory).load_data()
-    vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
-    storage_context = StorageContext.from_defaults(vector_store=vector_store)
-    index = VectorStoreIndex.from_documents(
-    documents, storage_context=storage_context
-    )
+    stats = pinecone_index.describe_index_stats()
+    if stats['total_vector_count'] == 0:
+        documents = SimpleDirectoryReader(directory).load_data()
+        vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        index = VectorStoreIndex.from_documents(
+        documents, storage_context=storage_context
+        )
     return index
